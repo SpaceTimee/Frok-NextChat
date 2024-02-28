@@ -1,4 +1,4 @@
-name: 'Upstream Sync'
+name: Upstream Sync
 
 on:
   schedule:
@@ -12,11 +12,9 @@ jobs:
     name: Sync latest commits from upstream repo
 
     steps:
-    # Step 1: Checkout the target repo
     - name: Target repo checkout
       uses: actions/checkout@v3
 
-    # Step 2: Run the sync action
     - name: Sync upstream run
       id: sync
       uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
@@ -27,10 +25,3 @@ jobs:
         upstream_sync_branch: main
 
         test_mode: false
-      
-    # Step 3: Check the sync action
-    - name: Sync upstream check
-      if: failure()
-      run: |
-        echo "Error"
-        exit 1
