@@ -9,6 +9,10 @@
 
 </div>
 
+## 部署地址
+
+**[https://free.chat.spacetimee.xyz](https://free.chat.spacetimee.xyz)**
+
 ## Frok NextChat 维护者
 
 **Space Time**
