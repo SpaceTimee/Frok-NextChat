@@ -8,8 +8,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "Frok NextChat",
-    "version": "2.11.2"
+    "productName": "NextChat",
+    "version": "2.11.3"
   },
   "tauri": {
     "allowlist": {
