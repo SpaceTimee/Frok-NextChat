@@ -23,8 +23,8 @@
 
 ## 联系方式
 
-1. **QQ 群 (主群): 338919498**
-2. TG 群 (分群) (宽松管理): [PixCealerChat](https://t.me/PixCealerChat)
+1. **QQ 群 (主群): 902575634**
+2. PCC TG 群 (分群) (宽松管理): [PixCealerChat](https://t.me/PixCealerChat)
 3. **邮箱: Zeus6_6@163.com**
 
 ## 许可证
