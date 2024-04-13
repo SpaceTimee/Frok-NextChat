@@ -158,7 +158,7 @@ export function SideBar(props: { className?: string }) {
           Frok NextChat
         </div>
         <div className={styles["sidebar-sub-title"]}>
-          Q群 (软件群 没广告): 338919498
+          Q群 (软件群 没广告): 902575634
         </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
