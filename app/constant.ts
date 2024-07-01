@@ -150,7 +150,7 @@ const openaiModels = [
   "gpt-4o",
   "gpt-4o-2024-05-13",
   "gpt-4-vision-preview",
-  "gpt-4-turbo-2024-04-09"
+  "gpt-4-turbo-2024-04-09",
 ];
 
 const googleModels = [
@@ -167,6 +167,7 @@ const anthropicModels = [
   "claude-3-sonnet-20240229",
   "claude-3-opus-20240229",
   "claude-3-haiku-20240307",
+  "claude-3-5-sonnet-20240620",
 ];
 
 export const DEFAULT_MODELS = [
@@ -208,6 +209,7 @@ export const internalAllowedWebDavEndpoints = [
   "https://dav.dropdav.com/",
   "https://dav.box.com/dav",
   "https://nanao.teracloud.jp/dav/",
+  "https://bora.teracloud.jp/dav/",
   "https://webdav.4shared.com/",
   "https://dav.idrivesync.com",
   "https://webdav.yandex.com",
