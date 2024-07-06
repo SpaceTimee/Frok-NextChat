@@ -5,6 +5,7 @@ import {
   DEFAULT_MODELS,
   DEFAULT_SIDEBAR_WIDTH,
   StoreKey,
+  ServiceProvider,
 } from "../constant";
 import { createPersistStore } from "../utils/store";
 
@@ -47,14 +48,15 @@ export const DEFAULT_CONFIG = {
   models: DEFAULT_MODELS as any as LLMModel[],
 
   modelConfig: {
-    model: "gpt-4-0125-preview" as ModelType,
+    model: "gpt-3.5-turbo" as ModelType,
+    providerName: "Openai" as ServiceProvider,
     temperature: 0.5,
     top_p: 1,
-    max_tokens: 5000,
+    max_tokens: 4000,
     presence_penalty: 0,
     frequency_penalty: 0,
     sendMemory: true,
-    historyMessageCount: 5,
+    historyMessageCount: 4,
     compressMessageLengthThreshold: 1000,
     enableInjectSystemPrompts: true,
     template: config?.template ?? DEFAULT_INPUT_TEMPLATE,
