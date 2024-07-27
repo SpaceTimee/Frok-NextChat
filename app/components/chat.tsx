@@ -37,6 +37,7 @@ import AutoIcon from "../icons/auto.svg";
 import BottomIcon from "../icons/bottom.svg";
 import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
+import PluginIcon from "../icons/plugin.svg";
 
 import {
   ChatMessage,
@@ -61,7 +62,7 @@ import {
   isVisionModel,
 } from "../utils";
 
-import { compressImage } from "@/app/utils/chat";
+import { uploadImage as uploadImageRemote } from "@/app/utils/chat";
 
 import dynamic from "next/dynamic";
 
@@ -89,6 +90,7 @@ import {
   REQUEST_TIMEOUT_MS,
   UNFINISHED_INPUT,
   ServiceProvider,
+  Plugin,
 } from "../constant";
 import { Avatar } from "./emoji";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "./mask";
@@ -245,11 +247,11 @@ function useSubmitHandler() {
   };
 }
 
-export type RenderPompt = Pick<Prompt, "title" | "content">;
+export type RenderPrompt = Pick<Prompt, "title" | "content">;
 
 export function PromptHints(props: {
-  prompts: RenderPompt[];
-  onPromptSelect: (prompt: RenderPompt) => void;
+  prompts: RenderPrompt[];
+  onPromptSelect: (prompt: RenderPrompt) => void;
 }) {
   const noPrompts = props.prompts.length === 0;
   const [selectIndex, setSelectIndex] = useState(0);
@@ -338,7 +340,7 @@ function ClearContextDivider() {
   );
 }
 
-function ChatAction(props: {
+export function ChatAction(props: {
   text: string;
   icon: JSX.Element;
   onClick: () => void;
@@ -476,6 +478,7 @@ export function ChatActions(props: {
     return model?.displayName ?? "";
   }, [models, currentModel, currentProviderName]);
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const [showPluginSelector, setShowPluginSelector] = useState(false);
   const [showUploadImage, setShowUploadImage] = useState(false);
 
   useEffect(() => {
@@ -620,6 +623,34 @@ export function ChatActions(props: {
           }}
         />
       )}
+
+      <ChatAction
+        onClick={() => setShowPluginSelector(true)}
+        text={Locale.Plugin.Name}
+        icon={<PluginIcon />}
+      />
+      {showPluginSelector && (
+        <Selector
+          multiple
+          defaultSelectedValue={chatStore.currentSession().mask?.plugin}
+          items={[
+            {
+              title: Locale.Plugin.Artifacts,
+              value: Plugin.Artifacts,
+            },
+          ]}
+          onClose={() => setShowPluginSelector(false)}
+          onSelection={(s) => {
+            const plugin = s[0];
+            chatStore.updateCurrentSession((session) => {
+              session.mask.plugin = s;
+            });
+            if (plugin) {
+              showToast(plugin);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -727,7 +758,7 @@ function _Chat() {
 
   // prompt hints
   const promptStore = usePromptStore();
-  const [promptHints, setPromptHints] = useState<RenderPompt[]>([]);
+  const [promptHints, setPromptHints] = useState<RenderPrompt[]>([]);
   const onSearch = useDebouncedCallback(
     (text: string) => {
       const matchedPrompts = promptStore.search(text);
@@ -812,7 +843,7 @@ function _Chat() {
     setAutoScroll(true);
   };
 
-  const onPromptSelect = (prompt: RenderPompt) => {
+  const onPromptSelect = (prompt: RenderPrompt) => {
     setTimeout(() => {
       setPromptHints([]);
 
@@ -1167,7 +1198,7 @@ function _Chat() {
               ...(await new Promise<string[]>((res, rej) => {
                 setUploading(true);
                 const imagesData: string[] = [];
-                compressImage(file, 256 * 1024)
+                uploadImageRemote(file)
                   .then((dataUrl) => {
                     imagesData.push(dataUrl);
                     setUploading(false);
@@ -1209,7 +1240,7 @@ function _Chat() {
           const imagesData: string[] = [];
           for (let i = 0; i < files.length; i++) {
             const file = event.target.files[i];
-            compressImage(file, 256 * 1024)
+            uploadImageRemote(file)
               .then((dataUrl) => {
                 imagesData.push(dataUrl);
                 if (
