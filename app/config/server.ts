@@ -21,7 +21,11 @@ declare global {
       ENABLE_BALANCE_QUERY?: string; // allow user to query balance or not
       DISABLE_FAST_LINK?: string; // disallow parse settings from url or not
       CUSTOM_MODELS?: string; // to control custom models
-      DEFAULT_MODEL?: string; // to cnntrol default model in every new chat window
+      DEFAULT_MODEL?: string; // to control default model in every new chat window
+
+      // stability only
+      STABILITY_URL?: string;
+      STABILITY_API_KEY?: string;
 
       // azure only
       AZURE_URL?: string; // https://{azure-url}/openai/deployments/{deploy-name}
@@ -107,6 +111,8 @@ export const getServerSideConfig = () => {
     if (defaultModel.startsWith("gpt-4")) defaultModel = "";
   }
 
+  const isStability = !!process.env.STABILITY_API_KEY;
+
   const isAzure = !!process.env.AZURE_URL;
   const isGoogle = !!process.env.GOOGLE_API_KEY;
   const isAnthropic = !!process.env.ANTHROPIC_API_KEY;
@@ -130,6 +136,10 @@ export const getServerSideConfig = () => {
     baseUrl: process.env.BASE_URL,
     apiKey: getApiKey(process.env.OPENAI_API_KEY),
     openaiOrgId: process.env.OPENAI_ORG_ID,
+
+    isStability,
+    stabilityUrl: process.env.STABILITY_URL,
+    stabilityApiKey: getApiKey(process.env.STABILITY_API_KEY),
 
     isAzure,
     azureUrl: process.env.AZURE_URL,
@@ -157,6 +167,11 @@ export const getServerSideConfig = () => {
     isAlibaba,
     alibabaUrl: process.env.ALIBABA_URL,
     alibabaApiKey: getApiKey(process.env.ALIBABA_API_KEY),
+
+    cloudflareAccountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+    cloudflareKVNamespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID,
+    cloudflareKVApiKey: getApiKey(process.env.CLOUDFLARE_KV_API_KEY),
+    cloudflareKVTTL: process.env.CLOUDFLARE_KV_TTL,
 
     gtmId: process.env.GTM_ID,
 
