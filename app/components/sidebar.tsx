@@ -171,15 +171,15 @@ export function SideBarHeader(props: {
   return (
     <Fragment>
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
-        <div className={styles["sidebar-title"]} data-tauri-drag-region>
-          Frok NextChat
+        <div className={styles["sidebar-title-container"]}>
+          <div className={styles["sidebar-title"]} data-tauri-drag-region>
+            Frok NextChat
+          </div>
+          <div className={styles["sidebar-sub-title"]}>
+            Q群 (软件群 没广告): 902575634
+          </div>
         </div>
-        <div className={styles["sidebar-sub-title"]}>
-          Q群 (软件群 没广告): 902575634
-        </div>
-        <div className={styles["sidebar-logo"] + " no-dark"}>
-          <ChatGptIcon />
-        </div>
+        <div className={styles["sidebar-logo"] + " no-dark"}>{logo}</div>
       </div>
       {children}
     </Fragment>
