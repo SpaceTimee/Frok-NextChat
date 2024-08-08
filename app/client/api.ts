@@ -6,7 +6,7 @@ import {
   ServiceProvider,
 } from "../constant";
 import { ChatMessage, ModelType, useAccessStore, useChatStore } from "../store";
-import { ChatGPTApi } from "./platforms/openai";
+import { ChatGPTApi, DalleRequestPayload } from "./platforms/openai";
 import { GeminiProApi } from "./platforms/google";
 import { ClaudeApi } from "./platforms/anthropic";
 import { ErnieApi } from "./platforms/baidu";
@@ -14,6 +14,7 @@ import { DoubaoApi } from "./platforms/bytedance";
 import { QwenApi } from "./platforms/alibaba";
 import { HunyuanApi } from "./platforms/tencent";
 import { MoonshotApi } from "./platforms/moonshot";
+import { SparkApi } from "./platforms/iflytek";
 
 export const ROLES = ["system", "user", "assistant"] as const;
 export type MessageRole = (typeof ROLES)[number];
@@ -42,6 +43,7 @@ export interface LLMConfig {
   stream?: boolean;
   presence_penalty?: number;
   frequency_penalty?: number;
+  size?: DalleRequestPayload["size"];
 }
 
 export interface ChatOptions {
@@ -64,12 +66,14 @@ export interface LLMModel {
   displayName?: string;
   available: boolean;
   provider: LLMModelProvider;
+  sorted: number;
 }
 
 export interface LLMModelProvider {
   id: string;
   providerName: string;
   providerType: string;
+  sorted: number;
 }
 
 export abstract class LLMApi {
@@ -118,11 +122,15 @@ export class ClientApi {
         break;
       case ModelProvider.Qwen:
         this.llm = new QwenApi();
+        break;
       case ModelProvider.Hunyuan:
         this.llm = new HunyuanApi();
         break;
       case ModelProvider.Moonshot:
         this.llm = new MoonshotApi();
+        break;
+      case ModelProvider.Iflytek:
+        this.llm = new SparkApi();
         break;
       default:
         this.llm = new ChatGPTApi();
@@ -207,6 +215,7 @@ export function getHeaders() {
     const isByteDance = modelConfig.providerName === ServiceProvider.ByteDance;
     const isAlibaba = modelConfig.providerName === ServiceProvider.Alibaba;
     const isMoonshot = modelConfig.providerName === ServiceProvider.Moonshot;
+    const isIflytek = modelConfig.providerName === ServiceProvider.Iflytek;
     const isEnabledAccessControl = accessStore.enabledAccessControl();
     const apiKey = isGoogle
       ? accessStore.googleApiKey
@@ -220,7 +229,13 @@ export function getHeaders() {
               ? accessStore.alibabaApiKey
               : isMoonshot
                 ? accessStore.moonshotApiKey
-                : accessStore.openaiApiKey;
+                : isIflytek
+                  ? accessStore.iflytekApiKey && accessStore.iflytekApiSecret
+                    ? accessStore.iflytekApiKey +
+                      ":" +
+                      accessStore.iflytekApiSecret
+                    : ""
+                  : accessStore.openaiApiKey;
     return {
       isGoogle,
       isAzure,
@@ -229,6 +244,7 @@ export function getHeaders() {
       isByteDance,
       isAlibaba,
       isMoonshot,
+      isIflytek,
       apiKey,
       isEnabledAccessControl,
     };
@@ -282,6 +298,8 @@ export function getClientApi(provider: ServiceProvider): ClientApi {
       return new ClientApi(ModelProvider.Hunyuan);
     case ServiceProvider.Moonshot:
       return new ClientApi(ModelProvider.Moonshot);
+    case ServiceProvider.Iflytek:
+      return new ClientApi(ModelProvider.Iflytek);
     default:
       return new ClientApi(ModelProvider.GPT);
   }
