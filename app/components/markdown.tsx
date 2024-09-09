@@ -19,7 +19,6 @@ import {
   HTMLPreview,
   HTMLPreviewHander,
 } from "./artifacts";
-import { Plugin } from "../constant";
 import { useChatStore } from "../store";
 import { IconButton } from "./button";
 
@@ -77,7 +76,6 @@ export function PreCode(props: any) {
   const { height } = useWindowSize();
   const chatStore = useChatStore();
   const session = chatStore.currentSession();
-  const plugins = session.mask?.plugin;
 
   const renderArtifacts = useDebouncedCallback(() => {
     if (!ref.current) return;
@@ -94,10 +92,7 @@ export function PreCode(props: any) {
     }
   }, 600);
 
-  const enableArtifacts = useMemo(
-    () => plugins?.includes(Plugin.Artifacts),
-    [plugins],
-  );
+  const enableArtifacts = session.mask?.enableArtifacts !== false;
 
   //Wrap the paragraph for plain-text
   useEffect(() => {
@@ -168,7 +163,7 @@ export function PreCode(props: any) {
   );
 }
 
-function CustomCode(props: { children: any }) {
+function CustomCode(props: { children: any; className?: string }) {
   const ref = useRef<HTMLPreElement>(null);
   const [collapsed, setCollapsed] = useState(true);
   const [showToggle, setShowToggle] = useState(false);
@@ -187,6 +182,7 @@ function CustomCode(props: { children: any }) {
   return (
     <>
       <code
+        className={props?.className}
         ref={ref}
         style={{
           maxHeight: collapsed ? "400px" : "none",
